@@ -1,6 +1,6 @@
 import express from 'express';
 
-import connectToDb from '../db/database.js';
+import connectToDb from './db/database.js';
 
 import checkAuth from './utils/checkAuth.js';
 
