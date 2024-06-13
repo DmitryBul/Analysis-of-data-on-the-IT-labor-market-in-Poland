@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const url = 'mongodb://localhost:27017/docker-projekt';
+const url = 'mongodb://localhost:27027/docker-projekt';
 
 async function connectToDb() {
   try {
