@@ -4,4 +4,6 @@ COPY ./dump /home/dump
 
 COPY ./import.sh /docker-entrypoint-initdb.d/
 
+EXPOSE 27017
+
 RUN chmod +x /docker-entrypoint-initdb.d/import.sh
