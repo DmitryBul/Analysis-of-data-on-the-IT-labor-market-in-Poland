@@ -1,5 +1,6 @@
 // Register.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles.css'; 
 
 function Register() {
@@ -21,12 +22,14 @@ function Register() {
       });
 
       if (response.ok) {
+        setError('');
         setSuccessMessage('Registration successful');
         setEmail('');
         setPassword('');
         setUsername('');
       } else {
         const data = await response.json();
+        setSuccessMessage('');
         setError(data.message || 'Registration failed');
       }
     } catch (error) {
@@ -38,8 +41,6 @@ function Register() {
   return (
     <div className="form-container">
       <h2>Register</h2>
-      {error && <div className="error-message">{error}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>Username:</label>
@@ -55,6 +56,9 @@ function Register() {
         </div>
         <button type="submit">Register</button>
       </form>
+      <p>Already have an account? <Link to="/login">Login</Link></p>
+      {error && <div className="error-message">{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
   );
 }
