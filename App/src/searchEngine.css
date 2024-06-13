@@ -1,5 +1,13 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
 .searchEngine {
   display: flex;
+  flex-grow: 1;
   margin: 0;
 }
 
@@ -18,7 +26,6 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1em;
   width : 100%;
   background: #282c34;
 }
