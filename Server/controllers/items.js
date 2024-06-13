@@ -16,7 +16,9 @@ router.get('/', async (req, res) => {
             minAvg_Salary,
             maxAvg_Salary,
             year,
-            month
+            month,
+            page = 1, // default to first page
+            pageSize = 10 // default to 10 items per page
         } = req.query;
 
         let filters = {};
@@ -30,8 +32,17 @@ router.get('/', async (req, res) => {
         if (year) filters.year = year;
         if (month) filters.month = month;
 
-        const items = await Item.find(filters);
-        res.json(items);
+        const totalItems = await Item.countDocuments(filters);
+        const items = await Item.find(filters).skip((page - 1) * pageSize).limit(parseInt(pageSize));
+        const totalPages = Math.ceil(totalItems / pageSize);
+
+        res.json({
+            page: page,
+            totalPages: totalPages,
+            pageSize: pageSize,
+            totalItems: totalItems,
+            items: items
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
