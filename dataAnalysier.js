@@ -29,7 +29,7 @@ const filePath = './data202406.json';
 async function main() {
   try {
     await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("Подключено к MongoDB");
+    console.log("MongoDB OK");
 
     const data = fs.readFileSync(filePath, 'utf8');
     const items = JSON.parse(data);
@@ -45,13 +45,13 @@ async function main() {
     }));
 
     const result = await Data.insertMany(formattedItems);
-    console.log('Данные успешно вставлены в MongoDB:', result.length);
+    console.log('Dane zapisane MongoDB:', result.length);
 
   } catch (err) {
-    console.error('Ошибка:', err);
+    console.error('Error:', err);
   } finally {
     await mongoose.connection.close();
-    console.log('Соединение с MongoDB закрыто');
+    console.log('Połączenie z MongoDB zamknięte');
   }
 }
 
