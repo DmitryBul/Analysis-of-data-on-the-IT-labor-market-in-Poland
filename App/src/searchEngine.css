@@ -48,3 +48,38 @@
   color: white;
   cursor: pointer;
 }
+
+
+.filter-list {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+}
+
+.filter-list.expanded {
+  max-height: 500px; /* Adjust this value to fit your content */
+  opacity: 1;
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.search-buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.search-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  padding: 0.5em 1.5em;
+  cursor: pointer;
+}
