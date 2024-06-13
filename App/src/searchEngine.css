@@ -1,0 +1,43 @@
+.searchEngine {
+  display: flex;
+  margin: 0;
+}
+
+.sidebar {
+  width: 20%;
+  background-color: #f8f9fa;
+  padding: 1em;
+}
+
+.main-content {
+  width: 80%;
+  background-color: #e9ecef;
+  padding: 1em;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  width : 100%;
+  background: #282c34;
+}
+
+.logo {
+  color: white;
+  font-size: 1.5em;
+  margin: 0.5em;
+}
+
+.logout{
+  color: white;
+  font-size: 1.5em;
+  margin: 0.5em;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
