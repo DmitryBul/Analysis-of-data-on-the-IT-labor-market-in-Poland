@@ -17,6 +17,8 @@ router.get('/', async (req, res) => {
             maxAvg_Salary,
             year,
             month,
+        } = req.query;
+        var {
             page = 1, // default to first page
             pageSize = 10 // default to 10 items per page
         } = req.query;
@@ -31,6 +33,9 @@ router.get('/', async (req, res) => {
         if (seniority) filters.seniority = seniority;
         if (year) filters.year = year;
         if (month) filters.month = month;
+
+        page = (parseInt(page) && parseInt(page) > 0) ? parseInt(page) : 1;
+        pageSize = (parseInt(pageSize) && parseInt(pageSize) > 0) ? parseInt(pageSize) : 10;
 
         const totalItems = await Item.countDocuments(filters);
         const items = await Item.find(filters).skip((page - 1) * pageSize).limit(parseInt(pageSize));
