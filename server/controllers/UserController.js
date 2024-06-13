@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import bcrypt from 'bcrypt'
-import User from '../models/User.js';
-import Data from '../models/Data.js';
+import User from '../../db/models/User.js';
+import Data from '../../db/models/Data.js';
 import { check, validationResult } from 'express-validator';
 import { registerValidator, loginValidator } from '../validations/auth.js'
 import checkAuth from '../utils/checkAuth.js';
