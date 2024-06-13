@@ -26,10 +26,10 @@ router.get('/', async (req, res) => {
         let filters = {};
 
         if (companyName) filters.companyName = companyName;
-        if (minAvg_Salary) filters.avg_Salary = { ...filters.avg_Salary, $gte: Number(minAvg_Salary) };
-        if (maxAvg_Salary) filters.avg_Salary = { ...filters.avg_Salary, $lte: Number(maxAvg_Salary) };
-        if (location) filters.location = { $in: location.split(',').map(loc => loc.trim()) };
-        if (technology) filters.technology = { $in: technology.split(',').map(tech => tech.trim()) };
+        if (minAvg_Salary) filters.avg_Salary = {...filters.avg_Salary, $gte: Number(minAvg_Salary)};
+        if (maxAvg_Salary) filters.avg_Salary = {...filters.avg_Salary, $lte: Number(maxAvg_Salary)};
+        if (location) filters.location = {$in: location.split(',').map(loc => loc.trim())};
+        if (technology) filters.technology = {$in: technology.split(',').map(tech => tech.trim())};
         if (seniority) filters.seniority = seniority;
         if (year) filters.year = year;
         if (month) filters.month = month;
@@ -49,8 +49,24 @@ router.get('/', async (req, res) => {
             items: items
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({message: err.message});
     }
 });
 
-export { router as filterRouter };
+router.get('/filters', async (req, res) => {
+    const location = await Item.distinct('location');
+    const technology = await Item.distinct('technology');
+    const seniority = await Item.distinct('seniority');
+    const year = await Item.distinct('year');
+    const month = await Item.distinct('month');
+
+    res.json({
+        location,
+        technology,
+        seniority,
+        year,
+        month
+    });
+});
+
+export {router as filterRouter};
