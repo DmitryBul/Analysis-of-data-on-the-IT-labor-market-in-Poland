@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile.express
+    networks:
+      - backend
+    ports:
+      - "4444:4444"
+    depends_on: 
+      - db
+    restart: on-failure
+
+  db:
+    build: 
+      context: ./Database
+      dockerfile: Dockerfile.mongo
+    networks:
+      - backend
+    ports:
+      - "27027:27017" 
+    restart: on-failure
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
