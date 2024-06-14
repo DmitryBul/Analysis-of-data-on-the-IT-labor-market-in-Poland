@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import '../styles.css';
 import '../searchEngine.css';
 
-const SearchEngine = ({children}) => {
+const SearchEngine = () => {
   const [locations, setLocations] = useState([]);
   const [technologies, setTechnologies] = useState([]);
   const [seniorities, setSeniorities] = useState([]);
@@ -32,6 +32,7 @@ const SearchEngine = ({children}) => {
   const itemsPerPage = 10; // Change this to the number of items you want per page
 
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const encodeArray = (arr) => {
     return arr.map(item => encodeURIComponent(item.toString())).join(',');
@@ -71,6 +72,7 @@ const SearchEngine = ({children}) => {
   };
 
   const browse = () => {
+    setIsLoading(true);
     const minAvg_Salary = salaryRange.min;
     const maxAvg_Salary = salaryRange.max;
     const url = createFilterUrl(selectedLocations, selectedTechnologies, selectedSeniorities, selectedYears, selectedMonths, minAvg_Salary, maxAvg_Salary) + `&page=${currentPage}&limit=${itemsPerPage}`;
@@ -81,12 +83,16 @@ const SearchEngine = ({children}) => {
         setData(data.items);
         setTotalRecords(data.totalItems);
         setTotalPages(data.totalPages);
-        if(currentPage > data.totalPages && data.totalPages > 0) {
+        if (currentPage > data.totalPages && data.totalPages > 0) {
           setCurrentPage(1);
           browse()
         }
+        setIsLoading(false);
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error:', error);
+        setIsLoading(false);
+      });
   }
 
   const {user} = useContext(UserContext);
@@ -122,7 +128,9 @@ const SearchEngine = ({children}) => {
       }
     };
 
-    fetchFilters();
+    browse();
+
+    fetchFilters().then(r => r);
   }, []);
 
   if (!user || !user.email || !user.username) {
@@ -259,10 +267,14 @@ const SearchEngine = ({children}) => {
       </aside>
       <main className="main-content">
         <div className="page-navigation">
-          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+          <button className="page-button" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1 || isLoading}>Previous
+          </button>
           <span>Page {currentPage} of {totalPages}</span>
-          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
+          <button className="page-button" onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || isLoading}>Next
+          </button>
         </div>
+        Total records: {totalRecords}
         <div className="results">
           <table>
             <thead>
@@ -277,8 +289,7 @@ const SearchEngine = ({children}) => {
             </tr>
             </thead>
             <tbody>
-            {data.map((item, index) => (
-              <tr key={index}>
+            {data.map((item, index) => (<tr key={index}>
                 <td>{item.companyName}</td>
                 <td>{item.location}</td>
                 <td>{item.technology}</td>
@@ -286,12 +297,10 @@ const SearchEngine = ({children}) => {
                 <td>{item.year}</td>
                 <td>{item.month}</td>
                 <td>{item.avg_Salary}</td>
-              </tr>
-            ))}
+              </tr>))}
             </tbody>
           </table>
         </div>
-        Total records: {totalRecords}
       </main>
     </div>
   </div>);
