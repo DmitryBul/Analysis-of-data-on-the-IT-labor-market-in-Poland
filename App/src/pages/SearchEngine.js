@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import UserContext from '../UserContext';
+import SalaryRangeSlider from '../InputRange';
 import {useNavigate} from "react-router-dom";
 import '../styles.css';
 import '../searchEngine.css';
@@ -23,9 +24,42 @@ const SearchEngine = ({children}) => {
   const [selectedYears, setSelectedYears] = useState({});
   const [selectedMonths, setSelectedMonths] = useState({});
 
+  const [salaryRange, setSalaryRange] = useState({min: 20000, max: 50000});
+
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Change this to the number of items you want per page
+
+  const [data, setData] = useState([]);
+
+  const encodeArray = (arr) => {
+    return arr.map(item => encodeURIComponent(item.toString())).join(',');
+  };
+
+  const createFilterUrl = (selectedLocations, selectedTechnologies, selectedSeniorities, selectedYears, selectedMonths, minAvg_Salary, maxAvg_Salary) => {
+    const locations = encodeArray(getSelectedOptions(selectedLocations));
+    const technologies = encodeArray(getSelectedOptions(selectedTechnologies));
+    const seniorities = encodeArray(getSelectedOptions(selectedSeniorities));
+    const years = encodeArray(getSelectedOptions(selectedYears));
+    const months = encodeArray(getSelectedOptions(selectedMonths));
+
+    return `location=${locations}&technology=${technologies}&seniority=${seniorities}&year=${years}&month=${months}&minAvg_Salary=${minAvg_Salary}&maxAvg_Salary=${maxAvg_Salary}`;
+  };
+
   const getSelectedOptions = (options) => {
     return Object.keys(options).filter((option) => options[option]);
   };
+
+  const resetSalaryRange = () => {
+    setSalaryRange({min: 20000, max: 50000});
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    browse()
+  };
+
 
   const clearFilters = () => {
     setSelectedLocations({});
@@ -33,13 +67,27 @@ const SearchEngine = ({children}) => {
     setSelectedSeniorities({});
     setSelectedYears({});
     setSelectedMonths({});
+    resetSalaryRange();
   };
 
-  // const selectedLocationsArray = getSelectedOptions(selectedLocations);
-  // const selectedTechnologiesArray = getSelectedOptions(selectedTechnologies);
-  // const selectedSenioritiesArray = getSelectedOptions(selectedSeniorities);
-  // const selectedYearsArray = getSelectedOptions(selectedYears);
-  // const selectedMonthsArray = getSelectedOptions(selectedMonths);
+  const browse = () => {
+    const minAvg_Salary = salaryRange.min;
+    const maxAvg_Salary = salaryRange.max;
+    const url = createFilterUrl(selectedLocations, selectedTechnologies, selectedSeniorities, selectedYears, selectedMonths, minAvg_Salary, maxAvg_Salary) + `&page=${currentPage}&limit=${itemsPerPage}`;
+
+    fetch(`/api/items?${url}`)
+      .then(response => response.json())
+      .then(data => {
+        setData(data.items);
+        setTotalRecords(data.totalItems);
+        setTotalPages(data.totalPages);
+        if(currentPage > data.totalPages && data.totalPages > 0) {
+          setCurrentPage(1);
+          browse()
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  }
 
   const {user} = useContext(UserContext);
   const navigate = useNavigate();
@@ -98,10 +146,15 @@ const SearchEngine = ({children}) => {
     <div className="searchEngine">
       <aside className="sidebar">
         <div className="search-buttons">
-          <button className="search-button">Search</button>
+          <button className="search-button" onClick={browse}>Search</button>
           <button className="search-button" onClick={clearFilters}>Clear filters</button>
         </div>
+
         <div className="filter-options">
+          <h3>Filter by Salary Range</h3>
+          <div className="slider-container">
+            <SalaryRangeSlider value={salaryRange} setValue={setSalaryRange}/>
+          </div>
           <h3 className="no-select" onClick={() => setIsLocationsExpanded(!isLocationsExpanded)}>
             Filter by Location {isLocationsExpanded ? '▲' : '▼'}
           </h3>
@@ -205,7 +258,40 @@ const SearchEngine = ({children}) => {
 
       </aside>
       <main className="main-content">
-
+        <div className="page-navigation">
+          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
+        </div>
+        <div className="results">
+          <table>
+            <thead>
+            <tr>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Technology</th>
+              <th>Seniority</th>
+              <th>Year</th>
+              <th>Month</th>
+              <th>Salary</th>
+            </tr>
+            </thead>
+            <tbody>
+            {data.map((item, index) => (
+              <tr key={index}>
+                <td>{item.companyName}</td>
+                <td>{item.location}</td>
+                <td>{item.technology}</td>
+                <td>{item.seniority}</td>
+                <td>{item.year}</td>
+                <td>{item.month}</td>
+                <td>{item.avg_Salary}</td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
+        Total records: {totalRecords}
       </main>
     </div>
   </div>);

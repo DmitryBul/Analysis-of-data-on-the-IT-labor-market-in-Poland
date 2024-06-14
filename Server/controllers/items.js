@@ -30,9 +30,9 @@ router.get('/', async (req, res) => {
         if (maxAvg_Salary) filters.avg_Salary = {...filters.avg_Salary, $lte: Number(maxAvg_Salary)};
         if (location) filters.location = {$in: location.split(',').map(loc => loc.trim())};
         if (technology) filters.technology = {$in: technology.split(',').map(tech => tech.trim())};
-        if (seniority) filters.seniority = seniority;
-        if (year) filters.year = year;
-        if (month) filters.month = month;
+        if (seniority) filters.seniority = {$in: seniority.split(',').map(s => s.trim())};
+        if (year) filters.year = {$in: year.split(',').map(y => y.trim())};
+        if (month) filters.month = {$in: month.split(',').map(m => m.trim())};
 
         page = (parseInt(page) && parseInt(page) > 0) ? parseInt(page) : 1;
         pageSize = (parseInt(pageSize) && parseInt(pageSize) > 0) ? parseInt(pageSize) : 10;

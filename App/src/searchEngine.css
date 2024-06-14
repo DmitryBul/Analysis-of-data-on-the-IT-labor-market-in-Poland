@@ -26,7 +26,7 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  width : 100%;
+  width: 100%;
   background: #282c34;
 }
 
@@ -36,7 +36,7 @@
   margin: 0.5em;
 }
 
-.logout{
+.logout {
   color: white;
   font-size: 1.5em;
   margin: 0.5em;
@@ -82,4 +82,22 @@
   font-size: 1em;
   padding: 0.5em 1.5em;
   cursor: pointer;
+}
+
+.slider-container .input-range {
+  height: 25px;
+  margin: 0 5%;
+  width: 90%
+}
+
+.slider-container .input-range__track {
+  background: #ced4da;
+}
+
+.slider-container .input-range__slider {
+  background: #007bff;
+}
+
+.slider-container .input-range__track--active {
+  background: #007bff;
 }
