@@ -1,0 +1,14 @@
+FROM node:20.12.2
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+RUN npm install react-input-range --legacy-peer-deps
+
+COPY . .
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]
