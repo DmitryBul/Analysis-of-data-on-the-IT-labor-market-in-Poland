@@ -85,7 +85,8 @@ const SearchEngine = () => {
         setTotalPages(data.totalPages);
         if (currentPage > data.totalPages && data.totalPages > 0) {
           setCurrentPage(1);
-          browse()
+          return browse()
+          //todo
         }
         setIsLoading(false);
       })
